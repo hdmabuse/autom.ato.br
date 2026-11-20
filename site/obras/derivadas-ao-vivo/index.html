@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-idioma="pt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DERIVADAS AO VIVO · autom.ato.br</title>
-<meta name="description" content="Releitura web de Derivadas de uma imagem (1969), de Waldemar Cordeiro e Giorgio Moscati.">
+<title data-pt="DERIVADAS AO VIVO · autom.ato.br" data-es="DERIVADAS AO VIVO · autom.ato.br" data-en="DERIVADAS AO VIVO · autom.ato.br">DERIVADAS AO VIVO · autom.ato.br</title>
+<meta name="description" content="Releitura web de Derivadas de uma imagem (1969), de Waldemar Cordeiro e Giorgio Moscati. Web rereading of Derivadas de uma imagem (1969).">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f4f1ea'/%3E%3Ctext x='8' y='13' font-family='monospace' font-size='14' text-anchor='middle' fill='%231b1b1b'%3E%23%3C/text%3E%3C/svg%3E">
+<script src="../../idioma.js"></script>
 <style>
   :root {
     --papel: #f4f1ea;
@@ -14,6 +15,10 @@
     --linha: #d8d2c4;
     --marca: #c8102e;
   }
+  html[data-idioma="pt"] .i-es, html[data-idioma="pt"] .i-en,
+  html[data-idioma="es"] .i-pt, html[data-idioma="es"] .i-en,
+  html[data-idioma="en"] .i-pt, html[data-idioma="en"] .i-es { display: none !important; }
+
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -29,16 +34,24 @@
   h2 { font-size: 15px; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.08em; }
   p { margin: 0 0 10px; max-width: 75ch; }
   .sub { color: var(--fraco); }
-  .voltar { margin: 0 0 14px; font-size: 14px; }
+  .barra-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; font-size: 14px; }
   .voltar a { color: var(--tinta); text-underline-offset: 3px; }
   .voltar a:hover { color: var(--marca); }
+  .idiomas { display: flex; gap: 2px; align-items: center; }
+  .idiomas button {
+    font: inherit; font-size: 14px; background: none; border: 1px solid transparent; color: var(--fraco);
+    padding: 1px 6px; cursor: pointer;
+  }
+  .idiomas button[aria-pressed="true"] { color: var(--tinta); border-color: var(--tinta); }
+  .idiomas button:hover { background: none; color: var(--marca); }
+  .idiomas .barra { color: var(--linha); }
 
   .controles {
     display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
     padding: 14px 0; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha);
     margin: 18px 0;
   }
-  .controles label { display: inline-flex; gap: 6px; align-items: center; }
+  .controles label { display: inline-flex; gap: 6px; align-items: center; max-width: 100%; flex-wrap: wrap; }
   button, select, input[type=text] {
     font: inherit; color: var(--tinta); background: #fff;
     border: 1px solid var(--tinta); padding: 4px 10px; border-radius: 0;
@@ -48,7 +61,6 @@
   button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
   input[type=text] { width: 12ch; }
   input[type=file] { font: inherit; max-width: 100%; }
-  .controles label { max-width: 100%; flex-wrap: wrap; }
   .aviso { color: var(--marca); min-height: 1.45em; }
 
   .regra {
@@ -79,79 +91,103 @@
   video, canvas.oculto { display: none; }
   footer { color: var(--fraco); font-size: 13px; padding-bottom: 40px; border-top: 1px solid var(--linha); padding-top: 14px; margin-top: 24px; }
   footer p { max-width: none; }
+  footer a { color: var(--fraco); }
 </style>
 </head>
 <body>
 
 <header>
-  <p class="voltar"><a href="../../">← autom.ato.br</a> <span class="sub">/ obras /</span></p>
+  <div class="barra-topo">
+    <p class="voltar" style="margin:0"><a href="../../">← autom.ato.br</a> <span class="sub">/ <span class="i-pt">obras</span><span class="i-es">obras</span><span class="i-en">works</span> /</span></p>
+    <div class="idiomas" role="group" data-aria-pt="Idioma" data-aria-es="Idioma" data-aria-en="Language" aria-label="Idioma">
+      <button type="button" data-escolhe-idioma="pt" lang="pt-BR" title="Português">PT</button><span class="barra">|</span>
+      <button type="button" data-escolhe-idioma="es" lang="es" title="Español">ES</button><span class="barra">|</span>
+      <button type="button" data-escolhe-idioma="en" lang="en" title="English">EN</button>
+    </div>
+  </div>
   <h1>Derivadas ao vivo</h1>
-  <p class="sub">Releitura web de <em>Derivadas de uma imagem</em> (1969), de Waldemar Cordeiro e Giorgio Moscati.</p>
-  <p>A imagem vira uma grade de 98 x 112 pontos. Cada ponto recebe um número conforme o tom: 0 é claro, o maior número é escuro. O grau 1 é a diferença entre cada ponto e o vizinho. O grau 2 é a diferença aplicada sobre o grau 1. Clique numa linha de qualquer painel para ver os números.</p>
+  <p class="sub">
+    <span class="i-pt">Releitura web de <em>Derivadas de uma imagem</em> (1969), de Waldemar Cordeiro e Giorgio Moscati.</span>
+    <span class="i-es">Relectura web de <em>Derivadas de uma imagem</em> (1969), de Waldemar Cordeiro y Giorgio Moscati.</span>
+    <span class="i-en">A web rereading of <em>Derivadas de uma imagem</em> (Derivatives of an Image, 1969), by Waldemar Cordeiro and Giorgio Moscati.</span>
+  </p>
+  <p class="i-pt">A imagem vira uma grade de 98 x 112 pontos. Cada ponto recebe um número conforme o tom: 0 é claro, o maior número é escuro. O grau 1 é a diferença entre cada ponto e o vizinho. O grau 2 é a diferença aplicada sobre o grau 1. Clique numa linha de qualquer painel para ver os números.</p>
+  <p class="i-es">La imagen se vuelve una cuadrícula de 98 x 112 puntos. Cada punto recibe un número según el tono: 0 es claro, el número mayor es oscuro. El grado 1 es la diferencia entre cada punto y su vecino. El grado 2 es la diferencia aplicada sobre el grado 1. Haga clic en una línea de cualquier panel para ver los números.</p>
+  <p class="i-en">The image becomes a grid of 98 x 112 points. Each point gets a number according to its tone: 0 is light, the highest number is dark. Degree 1 is the difference between each point and its neighbor. Degree 2 is the same difference applied to degree 1. Click a line in any panel to see the numbers.</p>
 </header>
 
 <main>
-  <section class="controles" aria-label="Controles">
-    <button id="btnCamera" type="button">Ligar câmera</button>
-    <label>Arquivo <input id="arquivo" type="file" accept="image/*"></label>
-    <label>Níveis
+  <section class="controles" data-aria-pt="Controles" data-aria-es="Controles" data-aria-en="Controls" aria-label="Controles">
+    <button id="btnCamera" type="button"></button>
+    <label><span class="i-pt">Arquivo</span><span class="i-es">Archivo</span><span class="i-en">File</span> <input id="arquivo" type="file" accept="image/*"></label>
+    <label><span class="i-pt">Níveis</span><span class="i-es">Niveles</span><span class="i-en">Levels</span>
       <select id="niveis">
-        <option value="7" selected>7 (0 a 6)</option>
-        <option value="8">8 (0 a 7)</option>
+        <option value="7" selected></option>
+        <option value="8"></option>
       </select>
     </label>
-    <label>Direção
+    <label><span class="i-pt">Direção</span><span class="i-es">Dirección</span><span class="i-en">Direction</span>
       <select id="direcao">
-        <option value="h" selected>horizontal</option>
-        <option value="v">vertical</option>
-        <option value="hv">as duas</option>
+        <option value="h" selected></option>
+        <option value="v"></option>
+        <option value="hv"></option>
       </select>
     </label>
-    <label>Caracteres <input id="rampa" type="text" value=" .:+xX#@" spellcheck="false" aria-describedby="dicaRampa"></label>
-    <label><input id="tempo" type="checkbox"> derivada no tempo</label>
-    <label><input id="pausa" type="checkbox"> pausar</label>
+    <label><span class="i-pt">Caracteres</span><span class="i-es">Caracteres</span><span class="i-en">Characters</span> <input id="rampa" type="text" value=" .:+xX#@" spellcheck="false" aria-describedby="dicaRampa"></label>
+    <label><input id="tempo" type="checkbox"> <span class="i-pt">derivada no tempo</span><span class="i-es">derivada en el tiempo</span><span class="i-en">derivative over time</span></label>
+    <label><input id="pausa" type="checkbox"> <span class="i-pt">pausar</span><span class="i-es">pausar</span><span class="i-en">pause</span></label>
   </section>
-  <p id="dicaRampa" class="sub">O primeiro caractere é o tom 0 (claro). Os seguintes escurecem. Se houver menos caracteres que níveis, o último se repete.</p>
+  <p id="dicaRampa" class="sub">
+    <span class="i-pt">O primeiro caractere é o tom 0 (claro). Os seguintes escurecem. Se houver menos caracteres que níveis, o último se repete.</span>
+    <span class="i-es">El primer carácter es el tono 0 (claro). Los siguientes oscurecen. Si hay menos caracteres que niveles, el último se repite.</span>
+    <span class="i-en">The first character is tone 0 (light). The next ones get darker. If there are fewer characters than levels, the last one repeats.</span>
+  </p>
   <p id="aviso" class="aviso" role="status"></p>
 
-  <section class="regra" aria-label="A regra">
-    <h2>A regra</h2>
+  <section class="regra" data-aria-pt="A regra" data-aria-es="La regla" data-aria-en="The rule" aria-label="A regra">
+    <h2><span class="i-pt">A regra</span><span class="i-es">La regla</span><span class="i-en">The rule</span></h2>
     <pre id="exemplo"></pre>
   </section>
 
   <section class="paineis" id="paineis">
     <div class="painel" data-grau="0">
-      <div class="topo"><h2>Grau zero</h2><div><button type="button" data-copiar="0">copiar</button><button type="button" data-baixar="0">baixar .txt</button></div></div>
-      <pre class="grade" id="grade0" aria-label="Grau zero em caracteres"></pre>
-      <p class="legenda">A imagem quantizada.</p>
+      <div class="topo"><h2><span class="i-pt">Grau zero</span><span class="i-es">Grado cero</span><span class="i-en">Degree zero</span></h2><div><button type="button" data-copiar="0" class="b-copiar"></button><button type="button" data-baixar="0" class="b-baixar"></button></div></div>
+      <pre class="grade" id="grade0"></pre>
+      <p class="legenda"><span class="i-pt">A imagem quantizada.</span><span class="i-es">La imagen cuantizada.</span><span class="i-en">The quantized image.</span></p>
     </div>
     <div class="painel" data-grau="1">
-      <div class="topo"><h2>Grau um</h2><div><button type="button" data-copiar="1">copiar</button><button type="button" data-baixar="1">baixar .txt</button></div></div>
-      <pre class="grade" id="grade1" aria-label="Grau um em caracteres"></pre>
-      <p class="legenda">Diferença entre vizinhos. Revela os contornos.</p>
+      <div class="topo"><h2><span class="i-pt">Grau um</span><span class="i-es">Grado uno</span><span class="i-en">Degree one</span></h2><div><button type="button" data-copiar="1" class="b-copiar"></button><button type="button" data-baixar="1" class="b-baixar"></button></div></div>
+      <pre class="grade" id="grade1"></pre>
+      <p class="legenda"><span class="i-pt">Diferença entre vizinhos. Revela os contornos.</span><span class="i-es">Diferencia entre vecinos. Revela los contornos.</span><span class="i-en">Difference between neighbors. It reveals the outlines.</span></p>
     </div>
     <div class="painel" data-grau="2">
-      <div class="topo"><h2>Grau dois</h2><div><button type="button" data-copiar="2">copiar</button><button type="button" data-baixar="2">baixar .txt</button></div></div>
-      <pre class="grade" id="grade2" aria-label="Grau dois em caracteres"></pre>
-      <p class="legenda">A diferença aplicada ao grau um.</p>
+      <div class="topo"><h2><span class="i-pt">Grau dois</span><span class="i-es">Grado dos</span><span class="i-en">Degree two</span></h2><div><button type="button" data-copiar="2" class="b-copiar"></button><button type="button" data-baixar="2" class="b-baixar"></button></div></div>
+      <pre class="grade" id="grade2"></pre>
+      <p class="legenda"><span class="i-pt">A diferença aplicada ao grau um.</span><span class="i-es">La diferencia aplicada al grado uno.</span><span class="i-en">The difference applied to degree one.</span></p>
     </div>
     <div class="painel" data-grau="3" id="painelTempo" hidden>
-      <div class="topo"><h2>Tempo</h2><div><button type="button" data-copiar="3">copiar</button><button type="button" data-baixar="3">baixar .txt</button></div></div>
-      <pre class="grade" id="grade3" aria-label="Derivada no tempo em caracteres"></pre>
-      <p class="legenda">Diferença entre este quadro e o anterior. Só o que se move aparece.</p>
+      <div class="topo"><h2><span class="i-pt">Tempo</span><span class="i-es">Tiempo</span><span class="i-en">Time</span></h2><div><button type="button" data-copiar="3" class="b-copiar"></button><button type="button" data-baixar="3" class="b-baixar"></button></div></div>
+      <pre class="grade" id="grade3"></pre>
+      <p class="legenda"><span class="i-pt">Diferença entre este quadro e o anterior. Só o que se move aparece.</span><span class="i-es">Diferencia entre este cuadro y el anterior. Solo aparece lo que se mueve.</span><span class="i-en">Difference between this frame and the previous one. Only what moves shows up.</span></p>
     </div>
   </section>
 
-  <section class="leitura" aria-label="Leitura da linha">
-    <h2 id="tituloLeitura">Leitura da linha</h2>
-    <pre id="leitura">Clique numa linha de qualquer painel.</pre>
+  <section class="leitura">
+    <h2 id="tituloLeitura"></h2>
+    <pre id="leitura"></pre>
   </section>
 </main>
 
 <footer>
-  <p>Obra original: Waldemar Cordeiro e Giorgio Moscati, <em>Derivadas de uma imagem</em>, 1969, IBM 360/44, Instituto de Física da USP.</p>
-  <p>Releitura anterior: Marisangela de Sousa Lima, <em>Releituras da obra "Derivadas de uma imagem" de Waldemar Cordeiro utilizando o Processing como ferramenta</em>, TCC, UFC Quixadá, 2025.</p>
-  <p>Esta página: <a href="../../">autom.ato.br</a>. Nenhuma imagem sai do seu computador.</p>
+  <p class="i-pt">Obra original: Waldemar Cordeiro e Giorgio Moscati, <em>Derivadas de uma imagem</em>, 1969, IBM 360/44, Instituto de Física da USP.</p>
+  <p class="i-es">Obra original: Waldemar Cordeiro y Giorgio Moscati, <em>Derivadas de uma imagem</em>, 1969, IBM 360/44, Instituto de Física de la USP.</p>
+  <p class="i-en">Original work: Waldemar Cordeiro and Giorgio Moscati, <em>Derivadas de uma imagem</em>, 1969, IBM 360/44, Institute of Physics, University of São Paulo (USP).</p>
+  <p class="i-pt">Releitura anterior: Marisangela de Sousa Lima, <em>Releituras da obra "Derivadas de uma imagem" de Waldemar Cordeiro utilizando o Processing como ferramenta</em>, TCC, UFC Quixadá, 2025.</p>
+  <p class="i-es">Relectura anterior: Marisangela de Sousa Lima, <em>Releituras da obra "Derivadas de uma imagem" de Waldemar Cordeiro utilizando o Processing como ferramenta</em>, trabajo de grado, UFC Quixadá, 2025.</p>
+  <p class="i-en">Earlier rereading: Marisangela de Sousa Lima, <em>Releituras da obra "Derivadas de uma imagem" de Waldemar Cordeiro utilizando o Processing como ferramenta</em>, undergraduate thesis, UFC Quixadá, 2025.</p>
+  <p class="i-pt">Esta página: <a href="../../">autom.ato.br</a>. Nenhuma imagem sai do seu computador.</p>
+  <p class="i-es">Esta página: <a href="../../">autom.ato.br</a>. Ninguna imagen sale de su computadora.</p>
+  <p class="i-en">This page: <a href="../../">autom.ato.br</a>. No image ever leaves your computer.</p>
 </footer>
 
 <video id="video" playsinline muted></video>
@@ -168,6 +204,7 @@ const COLS = 98;
 const LINS = 112;
 
 const el = (id) => document.getElementById(id);
+const T = (textos) => window.idioma.t(textos);
 const video = el("video");
 const amostra = el("amostra");
 const ctx = amostra.getContext("2d", { willReadFrequently: true });
@@ -178,6 +215,59 @@ let graus = [null, null, null, null];
 let grau0Anterior = null;
 let linhaSel = -1;
 let ultimoQuadro = 0;
+
+// ---------- textos gerados pelo script ----------
+
+const TXT = {
+  ligar:     { pt: "Ligar câmera", es: "Encender cámara", en: "Turn on camera" },
+  desligar:  { pt: "Desligar câmera", es: "Apagar cámara", en: "Turn off camera" },
+  copiar:    { pt: "copiar", es: "copiar", en: "copy" },
+  baixar:    { pt: "baixar .txt", es: "descargar .txt", en: "download .txt" },
+  niveis7:   { pt: "7 (0 a 6)", es: "7 (0 a 6)", en: "7 (0 to 6)" },
+  niveis8:   { pt: "8 (0 a 7)", es: "8 (0 a 7)", en: "8 (0 to 7)" },
+  dirH:      { pt: "horizontal", es: "horizontal", en: "horizontal" },
+  dirV:      { pt: "vertical", es: "vertical", en: "vertical" },
+  dirHV:     { pt: "as duas", es: "las dos", en: "both" },
+  leitura:   { pt: "Leitura da linha", es: "Lectura de la línea", en: "Line reading" },
+  linhaDe:   { pt: (n, t) => "Leitura da linha " + n + " de " + t,
+               es: (n, t) => "Lectura de la línea " + n + " de " + t,
+               en: (n, t) => "Reading line " + n + " of " + t },
+  clique:    { pt: "Clique numa linha de qualquer painel.", es: "Haga clic en una línea de cualquier panel.", en: "Click a line in any panel." },
+  nomes:     { pt: ["grau 0", "grau 1", "grau 2", "tempo "], es: ["grado 0", "grado 1", "grado 2", "tiempo "], en: ["degree 0", "degree 1", "degree 2", "time    "] },
+  nota1:     { pt: "(cada número menos o anterior, sem sinal)", es: "(cada número menos el anterior, sin signo)", en: "(each number minus the previous one, without sign)" },
+  nota2:     { pt: "(a mesma regra sobre o grau 1)", es: "(la misma regla sobre el grado 1)", en: "(the same rule applied to degree 1)" },
+  semCamera: { pt: "Este navegador não oferece acesso à câmera. Abra a página por https ou em localhost.",
+               es: "Este navegador no ofrece acceso a la cámara. Abra la página por https o en localhost.",
+               en: "This browser does not offer camera access. Open the page over https or on localhost." },
+  erroCam:   { pt: "Não foi possível abrir a câmera: ", es: "No fue posible abrir la cámara: ", en: "Could not open the camera: " },
+  erroArq:   { pt: "Não consegui ler esse arquivo de imagem.", es: "No pude leer ese archivo de imagen.", en: "Could not read that image file." },
+  copiado:   { pt: "Copiado.", es: "Copiado.", en: "Copied." },
+  semCopia:  { pt: "O navegador bloqueou a cópia. Use o botão de baixar.", es: "El navegador bloqueó la copia. Use el botón de descargar.", en: "The browser blocked copying. Use the download button." },
+  ariaGrade: { pt: ["Grau zero em caracteres", "Grau um em caracteres", "Grau dois em caracteres", "Derivada no tempo em caracteres"],
+               es: ["Grado cero en caracteres", "Grado uno en caracteres", "Grado dos en caracteres", "Derivada en el tiempo en caracteres"],
+               en: ["Degree zero in characters", "Degree one in characters", "Degree two in characters", "Derivative over time in characters"] }
+};
+
+function aplicaTextos() {
+  el("btnCamera").textContent = T(usandoCamera ? TXT.desligar : TXT.ligar);
+  document.querySelectorAll(".b-copiar").forEach((b) => b.textContent = T(TXT.copiar));
+  document.querySelectorAll(".b-baixar").forEach((b) => b.textContent = T(TXT.baixar));
+  const niv = el("niveis").options;
+  niv[0].textContent = T(TXT.niveis7);
+  niv[1].textContent = T(TXT.niveis8);
+  const dir = el("direcao").options;
+  dir[0].textContent = T(TXT.dirH);
+  dir[1].textContent = T(TXT.dirV);
+  dir[2].textContent = T(TXT.dirHV);
+  T(TXT.ariaGrade).forEach((a, n) => el("grade" + n).setAttribute("aria-label", a));
+  if (linhaSel < 0) {
+    el("tituloLeitura").textContent = T(TXT.leitura);
+    el("leitura").textContent = T(TXT.clique);
+  }
+  el("aviso").textContent = "";
+  mostraExemplo();
+  mostraLeitura();
+}
 
 // ---------- a regra ----------
 
@@ -220,10 +310,13 @@ function mostraExemplo() {
   const entrada = "000000666665553211111000000";
   const g1 = derivaLinha([...entrada].map(Number)).join("");
   const g2 = derivaLinha([...g1].map(Number)).join("");
+  const n = T(TXT.nomes);
+  const w = Math.max(...n.slice(0, 3).map((s) => s.length)) + 2;
+  const pad = (s) => s.padEnd(w, " ");
   el("exemplo").textContent =
-    "grau 0  " + entrada + "\n" +
-    "grau 1  " + g1 + "   (cada número menos o anterior, sem sinal)\n" +
-    "grau 2  " + g2 + "   (a mesma regra sobre o grau 1)";
+    pad(n[0]) + entrada + "\n" +
+    pad(n[1]) + g1 + "   " + T(TXT.nota1) + "\n" +
+    pad(n[2]) + g2 + "   " + T(TXT.nota2);
 }
 
 // ---------- amostragem ----------
@@ -305,7 +398,8 @@ function ajustaFonte() {
 
 function mostraLeitura() {
   if (linhaSel < 0 || !graus[0]) return;
-  const nomes = ["grau 0", "grau 1", "grau 2", "tempo "];
+  const nomes = T(TXT.nomes);
+  const w = Math.max(...nomes.map((s) => s.trim().length)) + 2;
   const mostrar = el("tempo").checked ? 4 : 3;
   const linhas = [];
   for (let n = 0; n < mostrar; n++) {
@@ -313,9 +407,9 @@ function mostraLeitura() {
     if (!g) continue;
     let s = "";
     for (let x = 0; x < COLS; x++) s += g[linhaSel * COLS + x];
-    linhas.push(nomes[n] + "  " + s);
+    linhas.push(nomes[n].trim().padEnd(w, " ") + s);
   }
-  el("tituloLeitura").textContent = "Leitura da linha " + (linhaSel + 1) + " de " + LINS;
+  el("tituloLeitura").textContent = T(TXT.linhaDe)(linhaSel + 1, LINS);
   el("leitura").textContent = linhas.join("\n");
 }
 
@@ -352,7 +446,7 @@ function laco(t) {
 // ---------- entradas ----------
 
 function imagemDeTeste() {
-  // Um rosto simples desenhado em canvas, para a página funcionar sem câmera.
+  // Um rosto simples desenhado em canvas, para a pagina funcionar sem camera.
   const c = document.createElement("canvas");
   c.width = 490; c.height = 560;
   const g = c.getContext("2d");
@@ -373,7 +467,7 @@ async function ligaCamera() {
   const aviso = el("aviso");
   if (usandoCamera) { desligaCamera(); return; }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    aviso.textContent = "Este navegador não oferece acesso à câmera. Abra a página por https ou em localhost.";
+    aviso.textContent = T(TXT.semCamera);
     return;
   }
   try {
@@ -383,10 +477,10 @@ async function ligaCamera() {
     fonte = video;
     usandoCamera = true;
     grau0Anterior = null;
-    el("btnCamera").textContent = "Desligar câmera";
+    el("btnCamera").textContent = T(TXT.desligar);
     aviso.textContent = "";
   } catch (e) {
-    aviso.textContent = "Não foi possível abrir a câmera: " + e.message;
+    aviso.textContent = T(TXT.erroCam) + e.message;
   }
 }
 
@@ -395,7 +489,7 @@ function desligaCamera() {
   if (s) s.getTracks().forEach((t) => t.stop());
   video.srcObject = null;
   usandoCamera = false;
-  el("btnCamera").textContent = "Ligar câmera";
+  el("btnCamera").textContent = T(TXT.ligar);
 }
 
 el("btnCamera").addEventListener("click", ligaCamera);
@@ -406,7 +500,7 @@ el("arquivo").addEventListener("change", (ev) => {
   desligaCamera();
   const img = new Image();
   img.onload = () => { fonte = img; grau0Anterior = null; calcula(); URL.revokeObjectURL(img.src); };
-  img.onerror = () => { el("aviso").textContent = "Não consegui ler esse arquivo de imagem."; };
+  img.onerror = () => { el("aviso").textContent = T(TXT.erroArq); };
   img.src = URL.createObjectURL(f);
 });
 
@@ -445,9 +539,9 @@ document.querySelectorAll("[data-copiar]").forEach((b) =>
   b.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(textoDoGrau(Number(b.dataset.copiar)));
-      el("aviso").textContent = "Copiado.";
+      el("aviso").textContent = T(TXT.copiado);
     } catch (e) {
-      el("aviso").textContent = "O navegador bloqueou a cópia. Use o botão de baixar.";
+      el("aviso").textContent = T(TXT.semCopia);
     }
   })
 );
@@ -466,9 +560,10 @@ document.querySelectorAll("[data-baixar]").forEach((b) =>
 );
 
 window.addEventListener("resize", ajustaFonte);
+document.addEventListener("idioma", aplicaTextos);
 
 // ---------- inicio ----------
-mostraExemplo();
+aplicaTextos();
 fonte = imagemDeTeste();
 ajustaFonte();
 calcula();

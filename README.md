@@ -15,6 +15,7 @@ autom . ato . br
 ```
 site/                          o que vai para o servidor
 ├── index.html                 abertura, obras, quem somos, contato
+├── idioma.js                  troca entre PT, ES e EN
 └── obras/
     └── derivadas-ao-vivo/
         └── index.html         a obra DERIVADAS AO VIVO
@@ -28,6 +29,18 @@ deploy/
 ```
 
 Cada página é um único arquivo HTML, com CSS e JavaScript dentro. Para acrescentar uma obra, crie `site/obras/<nome>/index.html` e um cartão na seção "Obras" de `site/index.html`.
+
+## Idiomas
+
+O site fala português, espanhol e inglês. Cada texto aparece três vezes, com as classes `i-pt`, `i-es` e `i-en`, e o CSS mostra só a do idioma ativo:
+
+```html
+<p class="i-pt">Texto em português.</p>
+<p class="i-es">Texto en español.</p>
+<p class="i-en">Text in English.</p>
+```
+
+O `site/idioma.js` escolhe o idioma nesta ordem: `?lang=pt|es|en` no endereço, a escolha anterior da pessoa, o idioma do navegador e, por fim, português. Textos gerados por JavaScript usam `window.idioma.t({ pt: "...", es: "...", en: "..." })`. Para links diretos, use `https://autom.ato.br/?lang=en`.
 
 ## Rodar na sua máquina
 
