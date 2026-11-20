@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>autom.ato.br</title>
+<meta name="description" content="autom.ato.br: coletivo de arte e tecnologia do Recife. Autômatos, regras legíveis e obras para a web.">
+<meta property="og:title" content="autom.ato.br">
+<meta property="og:description" content="Coletivo de arte e tecnologia do Recife. Em destaque: DERIVADAS AO VIVO.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f4f1ea'/%3E%3Ctext x='8' y='13' font-family='monospace' font-size='14' text-anchor='middle' fill='%231b1b1b'%3E%23%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --papel: #f4f1ea;
+    --branco: #fffdf8;
+    --tinta: #1b1b1b;
+    --fraco: #6b665c;
+    --linha: #d8d2c4;
+    --marca: #c8102e;
+    --largura: 1100px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--papel); color: var(--tinta);
+    font-family: "Courier New", Courier, monospace; font-size: 16px; line-height: 1.55;
+  }
+  a { color: var(--tinta); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--marca); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--marca); outline-offset: 3px; }
+  .faixa { max-width: var(--largura); margin: 0 auto; padding: 0 20px; }
+  pre { margin: 0; font-family: inherit; }
+  .so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- topo ---------- */
+  .topo { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
+  .marca-pequena { font-weight: bold; text-decoration: none; letter-spacing: 0.02em; }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px 14px; flex-wrap: wrap; }
+  nav a { text-decoration: none; }
+  nav a::before { content: "[ "; color: var(--fraco); }
+  nav a::after { content: " ]"; color: var(--fraco); }
+
+  /* ---------- abertura ---------- */
+  .logo { font-size: min(15px, calc((100vw - 40px) / 33)); line-height: 1.15; overflow: hidden; color: var(--tinta); margin: 18px 0 6px; }
+  .lema { color: var(--fraco); margin: 0 0 22px; max-width: 70ch; }
+
+  .destaque { background: var(--branco); border: 1px solid var(--tinta); padding: 18px; margin-bottom: 28px; }
+  .destaque .rotulo { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--marca); margin: 0 0 8px; }
+  .destaque .titulo { font-size: min(13px, calc((100vw - 80px) / 48)); line-height: 1.12; overflow: hidden; margin-bottom: 14px; }
+  .titulo-curto { display: none; font-size: 20px; font-weight: bold; letter-spacing: 0.06em; margin: 0 0 12px; }
+  @media (max-width: 640px) {
+    .destaque .titulo { display: none; }
+    .titulo-curto { display: block; }
+  }
+  .palco {
+    border: 1px solid var(--linha); background: var(--papel); padding: 8px; overflow: hidden;
+    touch-action: none; cursor: crosshair; user-select: none;
+  }
+  #ao-vivo { white-space: pre; letter-spacing: 0; }
+  .graus { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0 0; font-size: 14px; }
+  .graus button {
+    font: inherit; background: var(--branco); color: var(--tinta);
+    border: 1px solid var(--tinta); padding: 3px 10px; cursor: pointer;
+  }
+  .graus button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+  .destaque .texto { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; margin-top: 16px; }
+  .destaque .texto p { margin: 0 0 8px; max-width: 64ch; }
+  .botao {
+    display: inline-block; text-decoration: none; border: 1px solid var(--tinta);
+    background: var(--tinta); color: var(--papel); padding: 10px 16px; white-space: nowrap;
+  }
+  .botao:hover { background: var(--marca); border-color: var(--marca); color: var(--papel); }
+  @media (max-width: 700px) { .destaque .texto { grid-template-columns: 1fr; } }
+
+  /* ---------- secoes ---------- */
+  section.bloco { padding: 34px 0 10px; border-top: 1px dashed var(--fraco); }
+  h2 { font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; margin: 0 0 18px; }
+  h2::before { content: "## "; color: var(--fraco); }
+  h3 { font-size: 17px; margin: 0 0 4px; }
+  p { margin: 0 0 14px; max-width: 72ch; }
+  .fraco { color: var(--fraco); }
+
+  .obras { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  .obra { background: var(--branco); border: 1px solid var(--linha); padding: 16px; display: flex; flex-direction: column; }
+  .obra pre { font-size: 11px; line-height: 1.1; color: var(--fraco); margin-bottom: 12px; overflow: hidden; }
+  .obra .meta { font-size: 13px; color: var(--fraco); margin-bottom: 8px; }
+  .obra p { font-size: 15px; }
+  .obra .acao { margin-top: auto; }
+  .estado { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--fraco); color: var(--fraco); padding: 1px 6px; }
+
+  .nome { background: var(--branco); border: 1px solid var(--linha); padding: 14px 16px; margin: 0 0 18px; overflow-x: auto; }
+  .pessoas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 8px; }
+  .pessoa { border-left: 2px solid var(--tinta); padding-left: 14px; }
+
+  .contato dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0; }
+  .contato dt { color: var(--fraco); }
+  .contato dd { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+
+  footer { margin-top: 40px; padding: 18px 0 40px; border-top: 1px solid var(--linha); color: var(--fraco); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="faixa topo">
+  <a class="marca-pequena" href="#">autom.ato.br</a>
+  <nav aria-label="Seções">
+    <ul>
+      <li><a href="#obras">obras</a></li>
+      <li><a href="#quem">quem somos</a></li>
+      <li><a href="#contato">contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="faixa">
+
+  <pre class="logo" aria-label="autom.ato.br">           _                    _         _
+ __ _ _  _| |_ ___ _ __    __ _| |_ ___  | |__ _ _
+/ _` | || |  _/ _ \ '  \ _/ _` |  _/ _ \_| '_ \ '_|
+\__,_|\_,_|\__\___/_|_|_(_)__,_|\__\___(_)_.__/_|</pre>
+  <p class="lema">Autômatos feitos à mão, no Brasil. Regras pequenas, legíveis e abertas, aplicadas a materiais do mundo.</p>
+
+  <!-- ---------- obra em destaque ---------- -->
+  <article class="destaque" aria-labelledby="titulo-destaque">
+    <p class="rotulo">Obra em destaque</p>
+    <h1 id="titulo-destaque" class="so-leitor">DERIVADAS AO VIVO</h1>
+      <p class="titulo-curto" aria-hidden="true">[ DERIVADAS AO VIVO ]</p>
+      <pre class="titulo" aria-hidden="true"> ___  ___ ___ _____   ___   ___   _   ___      _   ___   __   _______   _____
+|   \| __| _ \_ _\ \ / /_\ |   \ /_\ / __|    /_\ / _ \  \ \ / /_ _\ \ / / _ \
+| |) | _||   /| | \ V / _ \| |) / _ \\__ \   / _ \ (_) |  \ V / | | \ V / (_) |
+|___/|___|_|_\___| \_/_/ \_\___/_/ \_\___/  /_/ \_\___/    \_/ |___| \_/ \___/</pre>
+
+    <div class="palco" id="palco" aria-label="Demonstração animada: ondas em caracteres. Passe o ponteiro para escurecer a imagem.">
+      <pre id="ao-vivo"></pre>
+    </div>
+    <div class="graus" role="group" aria-label="Escolha o grau">
+      <span class="fraco">grau:</span>
+      <button type="button" data-grau="0" aria-pressed="false">zero</button>
+      <button type="button" data-grau="1" aria-pressed="true">um</button>
+      <button type="button" data-grau="2" aria-pressed="false">dois</button>
+      <button type="button" id="pausa" aria-pressed="false">pausar</button>
+      <span class="fraco">passe o ponteiro sobre a imagem</span>
+    </div>
+
+    <div class="texto">
+      <div>
+        <p>Releitura web de <em>Derivadas de uma imagem</em> (1969), de Waldemar Cordeiro e Giorgio Moscati, a primeira obra visual feita por computador no Brasil.</p>
+        <p>A imagem vira números. Cada número vira uma letra. O grau um é a diferença entre vizinhos e revela os contornos. Na obra, você usa a câmera ou uma foto e vê a regra trabalhar, linha por linha.</p>
+      </div>
+      <a class="botao" href="obras/derivadas-ao-vivo/">abrir a obra →</a>
+    </div>
+  </article>
+
+  <!-- ---------- obras ---------- -->
+  <section class="bloco" id="obras" aria-labelledby="h-obras">
+    <h2 id="h-obras">Obras</h2>
+    <div class="obras">
+
+      <article class="obra">
+<pre aria-hidden="true">  ..::++xx##@@##xx++::..
+ .:+x#@@@#x+:..:+x#@@@#x+:.
+  .:x#@#x:.      .:x#@#x:.
+   grau 0 → grau 1 → grau 2</pre>
+        <h3>DERIVADAS AO VIVO</h3>
+        <p class="meta">2026 · página web · câmera, imagem, texto</p>
+        <p>A regra de Cordeiro e Moscati aplicada ao vivo, no navegador. Três graus lado a lado, os números de cada linha à vista e saída em texto puro.</p>
+        <p class="acao"><a href="obras/derivadas-ao-vivo/">abrir →</a></p>
+      </article>
+
+      <article class="obra">
+<pre aria-hidden="true">~~~~-~~~~~-~~~~~~~-~~~~~
+@#oO'@@#o'  O#@@o' '#@@o
+ o' 'O#o  ' 'o#O'   'o'
+:::::::::::::::::::::::::
+.........................</pre>
+        <h3>RENDA <span class="estado">em desenvolvimento</span></h3>
+        <p class="meta">2026–27 · autômato celular · ASCII e ruído branco</p>
+        <p>A espuma das ondas na areia, vista de cima, desenhada em caracteres. As regras do autômato leem os dados do El Niño de 2026–27. Pensada como obra web e, depois, como instalação em que as pessoas caminham com a espuma sobre os pés.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ---------- quem somos ---------- -->
+  <section class="bloco" id="quem" aria-labelledby="h-quem">
+    <h2 id="h-quem">Quem somos</h2>
+
+    <pre class="nome" aria-label="autom ponto ato ponto br">autom . ato . br
+  |       |     |
+  |       |     +-- o lugar: Brasil
+  |       +-------- o ato: a ação, o gesto de quem escreve a regra
+  +---------------- o autômato: a máquina que segue regras</pre>
+
+    <p>autom.ato.br é um coletivo de arte e tecnologia do Recife. O nome junta a máquina que segue regras e o ato humano que escreve essas regras, num lugar específico.</p>
+    <p>A inteligência artificial gerativa aprende suas regras a partir de dados extraídos do mundo inteiro, e pouca gente consegue lê-las. Um autômato celular tem poucas regras, escritas à mão, que qualquer pessoa pode ler e mudar. Escolhemos o segundo caminho. Pensamos essa escolha com o pensamento quilombola de Antônio Bispo dos Santos: confluência no lugar da monocultura, e o tempo como começo, meio e começo, como a maré.</p>
+    <p>Viemos do Re:combo, coletivo do Recife que fez música, web arte e instalações com licenças abertas. Qualquer pessoa podia pegar uma obra, transformar e devolver. Seguimos trabalhando assim.</p>
+
+    <div class="pessoas">
+      <div class="pessoa">
+        <h3>H.D. Mabuse</h3>
+        <p>Designer, pesquisador, educador e artista sonoro. Doutor em Design pela UFPE, professor da CESAR School. Trabalha com design, tecnologia e cultura desde 1990, com foco em tecnologias do Sul global.</p>
+      </div>
+      <div class="pessoa">
+        <h3>Haidée Lima</h3>
+        <p>[Texto sobre Haidée Lima.]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- contato ---------- -->
+  <section class="bloco contato" id="contato" aria-labelledby="h-contato">
+    <h2 id="h-contato">Contato</h2>
+    <dl>
+      <dt>e-mail</dt>
+      <dd><a href="mailto:contato@autom.ato.br">contato@autom.ato.br</a></dd>
+      <dt>código</dt>
+      <dd><a href="https://github.com/hdmabuse/autom.ato.br">github.com/hdmabuse/autom.ato.br</a></dd>
+      <dt>lugar</dt>
+      <dd>Recife, Pernambuco, Brasil</dd>
+    </dl>
+  </section>
+</main>
+
+<footer class="faixa">
+  <p>autom.ato.br · Recife · Este site não usa rastreadores nem cookies. Feito com HTML, CSS e um pouco de JavaScript, sem dependências.</p>
+</footer>
+
+<script>
+// ============================================================
+// Demonstracao da abertura: ondas em caracteres.
+// Mesma regra de DERIVADAS AO VIVO: d = |v - vizinho|.
+// ============================================================
+(function () {
+  const pre = document.getElementById("ao-vivo");
+  const palco = document.getElementById("palco");
+  const NIVEIS = 7;
+  const RAMPA = " .:+xX#";
+  let cols = 96, lins = 26;
+  let grau = 1;
+  let pausado = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let t = 0;
+  let ponteiro = null; // {x, y} em celulas
+  let ultimo = 0;
+
+  function dimensiona() {
+    const larg = palco.clientWidth - 16;
+    cols = larg < 520 ? 60 : 96;
+    lins = larg < 520 ? 22 : 26;
+    const tam = larg / (cols * 0.6);
+    pre.style.fontSize = tam + "px";
+    pre.style.lineHeight = (tam * 1.0) + "px";
+  }
+
+  // Campo de ondas: faixas que sobem e descem, como agua na areia.
+  function campo() {
+    const g = new Uint8Array(cols * lins);
+    for (let y = 0; y < lins; y++) {
+      for (let x = 0; x < cols; x++) {
+        const u = x / cols, v = y / lins;
+        let s = Math.sin(u * 9 + t * 0.9) * 0.35
+              + Math.sin(u * 3.1 - v * 4 + t * 0.5) * 0.45
+              + Math.sin((u + v) * 14 - t * 1.4) * 0.2;
+        let val = 0.5 + 0.5 * Math.sin(v * 7 + s * 3 - t * 0.7);
+        if (ponteiro) {
+          const dx = (x - ponteiro.x) * 0.6, dy = y - ponteiro.y;
+          const d2 = dx * dx + dy * dy;
+          val += 1.2 * Math.exp(-d2 / 18);
+        }
+        g[y * cols + x] = Math.max(0, Math.min(NIVEIS - 1, Math.round(val * (NIVEIS - 1))));
+      }
+    }
+    return g;
+  }
+
+  function deriva(g) {
+    const out = new Uint8Array(cols * lins);
+    for (let y = 0; y < lins; y++) {
+      for (let x = 0; x < cols; x++) {
+        const v = g[y * cols + x];
+        const esq = x > 0 ? g[y * cols + x - 1] : v;
+        const cima = y > 0 ? g[(y - 1) * cols + x] : v;
+        out[y * cols + x] = Math.min(NIVEIS - 1, Math.abs(v - esq) + Math.abs(v - cima));
+      }
+    }
+    return out;
+  }
+
+  function desenha() {
+    let g = campo();
+    for (let i = 0; i < grau; i++) g = deriva(g);
+    const linhas = [];
+    for (let y = 0; y < lins; y++) {
+      let s = "";
+      for (let x = 0; x < cols; x++) s += RAMPA[g[y * cols + x]];
+      linhas.push(s);
+    }
+    pre.textContent = linhas.join("\n");
+  }
+
+  function laco(agora) {
+    if (!pausado && agora - ultimo > 70) {
+      ultimo = agora;
+      t += 0.06;
+      desenha();
+    }
+    requestAnimationFrame(laco);
+  }
+
+  function posicao(ev) {
+    const r = pre.getBoundingClientRect();
+    ponteiro = {
+      x: ((ev.clientX - r.left) / r.width) * cols,
+      y: ((ev.clientY - r.top) / r.height) * lins
+    };
+    if (pausado) desenha();
+  }
+  palco.addEventListener("pointermove", posicao);
+  palco.addEventListener("pointerdown", posicao);
+  palco.addEventListener("pointerleave", () => { ponteiro = null; if (pausado) desenha(); });
+
+  document.querySelectorAll(".graus [data-grau]").forEach((b) => {
+    b.addEventListener("click", () => {
+      grau = Number(b.dataset.grau);
+      document.querySelectorAll(".graus [data-grau]").forEach((o) =>
+        o.setAttribute("aria-pressed", String(o === b)));
+      desenha();
+    });
+  });
+
+  const btnPausa = document.getElementById("pausa");
+  function marcaPausa() {
+    btnPausa.setAttribute("aria-pressed", String(pausado));
+    btnPausa.textContent = pausado ? "animar" : "pausar";
+  }
+  btnPausa.addEventListener("click", () => { pausado = !pausado; marcaPausa(); });
+  marcaPausa();
+
+  window.addEventListener("resize", () => { dimensiona(); desenha(); });
+  dimensiona();
+  desenha();
+  requestAnimationFrame(laco);
+})();
+</script>
+</body>
+</html>

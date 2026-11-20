@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DERIVADAS AO VIVO · autom.ato.br</title>
+<meta name="description" content="Releitura web de Derivadas de uma imagem (1969), de Waldemar Cordeiro e Giorgio Moscati.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f4f1ea'/%3E%3Ctext x='8' y='13' font-family='monospace' font-size='14' text-anchor='middle' fill='%231b1b1b'%3E%23%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --papel: #f4f1ea;
+    --tinta: #1b1b1b;
+    --fraco: #6b665c;
+    --linha: #d8d2c4;
+    --marca: #c8102e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: "Courier New", Courier, monospace;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  header, main, footer { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+  header { padding-top: 28px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: 0.02em; }
+  h2 { font-size: 15px; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+  p { margin: 0 0 10px; max-width: 75ch; }
+  .sub { color: var(--fraco); }
+  .voltar { margin: 0 0 14px; font-size: 14px; }
+  .voltar a { color: var(--tinta); text-underline-offset: 3px; }
+  .voltar a:hover { color: var(--marca); }
+
+  .controles {
+    display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+    padding: 14px 0; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha);
+    margin: 18px 0;
+  }
+  .controles label { display: inline-flex; gap: 6px; align-items: center; }
+  button, select, input[type=text] {
+    font: inherit; color: var(--tinta); background: #fff;
+    border: 1px solid var(--tinta); padding: 4px 10px; border-radius: 0;
+  }
+  button { cursor: pointer; }
+  button:hover { background: var(--tinta); color: var(--papel); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+  input[type=text] { width: 12ch; }
+  input[type=file] { font: inherit; max-width: 100%; }
+  .controles label { max-width: 100%; flex-wrap: wrap; }
+  .aviso { color: var(--marca); min-height: 1.45em; }
+
+  .regra {
+    background: #fff; border: 1px solid var(--linha); padding: 12px 14px; margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .regra pre { margin: 0; font-size: 14px; }
+
+  .paineis { display: flex; flex-wrap: wrap; gap: 18px; }
+  .painel { flex: 1 1 300px; min-width: 0; }
+  .painel .topo { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .painel .topo div { display: flex; gap: 6px; }
+  .painel button { font-size: 12px; padding: 2px 8px; }
+  pre.grade {
+    margin: 6px 0 0; background: #fff; border: 1px solid var(--linha);
+    padding: 6px; overflow: hidden; cursor: crosshair; user-select: text;
+    white-space: pre; letter-spacing: 0;
+  }
+  pre.grade .sel { background: #ffe1e6; }
+  .legenda { color: var(--fraco); font-size: 13px; margin-top: 4px; }
+
+  .leitura { margin: 22px 0; }
+  .leitura pre {
+    background: #fff; border: 1px solid var(--linha); padding: 10px 12px;
+    overflow-x: auto; font-size: 13px; margin: 0;
+  }
+
+  video, canvas.oculto { display: none; }
+  footer { color: var(--fraco); font-size: 13px; padding-bottom: 40px; border-top: 1px solid var(--linha); padding-top: 14px; margin-top: 24px; }
+  footer p { max-width: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="voltar"><a href="../../">← autom.ato.br</a> <span class="sub">/ obras /</span></p>
+  <h1>Derivadas ao vivo</h1>
+  <p class="sub">Releitura web de <em>Derivadas de uma imagem</em> (1969), de Waldemar Cordeiro e Giorgio Moscati.</p>
+  <p>A imagem vira uma grade de 98 x 112 pontos. Cada ponto recebe um número conforme o tom: 0 é claro, o maior número é escuro. O grau 1 é a diferença entre cada ponto e o vizinho. O grau 2 é a diferença aplicada sobre o grau 1. Clique numa linha de qualquer painel para ver os números.</p>
+</header>
+
+<main>
+  <section class="controles" aria-label="Controles">
+    <button id="btnCamera" type="button">Ligar câmera</button>
+    <label>Arquivo <input id="arquivo" type="file" accept="image/*"></label>
+    <label>Níveis
+      <select id="niveis">
+        <option value="7" selected>7 (0 a 6)</option>
+        <option value="8">8 (0 a 7)</option>
+      </select>
+    </label>
+    <label>Direção
+      <select id="direcao">
+        <option value="h" selected>horizontal</option>
+        <option value="v">vertical</option>
+        <option value="hv">as duas</option>
+      </select>
+    </label>
+    <label>Caracteres <input id="rampa" type="text" value=" .:+xX#@" spellcheck="false" aria-describedby="dicaRampa"></label>
+    <label><input id="tempo" type="checkbox"> derivada no tempo</label>
+    <label><input id="pausa" type="checkbox"> pausar</label>
+  </section>
+  <p id="dicaRampa" class="sub">O primeiro caractere é o tom 0 (claro). Os seguintes escurecem. Se houver menos caracteres que níveis, o último se repete.</p>
+  <p id="aviso" class="aviso" role="status"></p>
+
+  <section class="regra" aria-label="A regra">
+    <h2>A regra</h2>
+    <pre id="exemplo"></pre>
+  </section>
+
+  <section class="paineis" id="paineis">
+    <div class="painel" data-grau="0">
+      <div class="topo"><h2>Grau zero</h2><div><button type="button" data-copiar="0">copiar</button><button type="button" data-baixar="0">baixar .txt</button></div></div>
+      <pre class="grade" id="grade0" aria-label="Grau zero em caracteres"></pre>
+      <p class="legenda">A imagem quantizada.</p>
+    </div>
+    <div class="painel" data-grau="1">
+      <div class="topo"><h2>Grau um</h2><div><button type="button" data-copiar="1">copiar</button><button type="button" data-baixar="1">baixar .txt</button></div></div>
+      <pre class="grade" id="grade1" aria-label="Grau um em caracteres"></pre>
+      <p class="legenda">Diferença entre vizinhos. Revela os contornos.</p>
+    </div>
+    <div class="painel" data-grau="2">
+      <div class="topo"><h2>Grau dois</h2><div><button type="button" data-copiar="2">copiar</button><button type="button" data-baixar="2">baixar .txt</button></div></div>
+      <pre class="grade" id="grade2" aria-label="Grau dois em caracteres"></pre>
+      <p class="legenda">A diferença aplicada ao grau um.</p>
+    </div>
+    <div class="painel" data-grau="3" id="painelTempo" hidden>
+      <div class="topo"><h2>Tempo</h2><div><button type="button" data-copiar="3">copiar</button><button type="button" data-baixar="3">baixar .txt</button></div></div>
+      <pre class="grade" id="grade3" aria-label="Derivada no tempo em caracteres"></pre>
+      <p class="legenda">Diferença entre este quadro e o anterior. Só o que se move aparece.</p>
+    </div>
+  </section>
+
+  <section class="leitura" aria-label="Leitura da linha">
+    <h2 id="tituloLeitura">Leitura da linha</h2>
+    <pre id="leitura">Clique numa linha de qualquer painel.</pre>
+  </section>
+</main>
+
+<footer>
+  <p>Obra original: Waldemar Cordeiro e Giorgio Moscati, <em>Derivadas de uma imagem</em>, 1969, IBM 360/44, Instituto de Física da USP.</p>
+  <p>Releitura anterior: Marisangela de Sousa Lima, <em>Releituras da obra "Derivadas de uma imagem" de Waldemar Cordeiro utilizando o Processing como ferramenta</em>, TCC, UFC Quixadá, 2025.</p>
+  <p>Esta página: <a href="../../">autom.ato.br</a>. Nenhuma imagem sai do seu computador.</p>
+</footer>
+
+<video id="video" playsinline muted></video>
+<canvas id="amostra" class="oculto" width="98" height="112"></canvas>
+
+<script>
+// ============================================================
+// Derivadas ao vivo
+// Regra de Moscati: d[i] = |v[i] - v[i-1]|, com o vizinho
+// fora da grade igual a 0 (papel em branco).
+// ============================================================
+
+const COLS = 98;
+const LINS = 112;
+
+const el = (id) => document.getElementById(id);
+const video = el("video");
+const amostra = el("amostra");
+const ctx = amostra.getContext("2d", { willReadFrequently: true });
+
+let fonte = null;          // imagem, video ou canvas de teste
+let usandoCamera = false;
+let graus = [null, null, null, null];
+let grau0Anterior = null;
+let linhaSel = -1;
+let ultimoQuadro = 0;
+
+// ---------- a regra ----------
+
+function derivaLinha(v) {
+  const d = new Array(v.length);
+  let ant = 0;
+  for (let i = 0; i < v.length; i++) {
+    d[i] = Math.abs(v[i] - ant);
+    ant = v[i];
+  }
+  return d;
+}
+
+function derivaGrade(g, direcao, max) {
+  const out = new Uint8Array(COLS * LINS);
+  for (let y = 0; y < LINS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const v = g[y * COLS + x];
+      const esq = x > 0 ? g[y * COLS + x - 1] : 0;
+      const cima = y > 0 ? g[(y - 1) * COLS + x] : 0;
+      let d;
+      if (direcao === "h") d = Math.abs(v - esq);
+      else if (direcao === "v") d = Math.abs(v - cima);
+      else d = Math.min(max, Math.abs(v - esq) + Math.abs(v - cima));
+      out[y * COLS + x] = d;
+    }
+  }
+  return out;
+}
+
+function derivaTempo(atual, anterior) {
+  const out = new Uint8Array(COLS * LINS);
+  if (!anterior) return out;
+  for (let i = 0; i < out.length; i++) out[i] = Math.abs(atual[i] - anterior[i]);
+  return out;
+}
+
+// Mostra o exemplo de Moscati calculado pela mesma funcao.
+function mostraExemplo() {
+  const entrada = "000000666665553211111000000";
+  const g1 = derivaLinha([...entrada].map(Number)).join("");
+  const g2 = derivaLinha([...g1].map(Number)).join("");
+  el("exemplo").textContent =
+    "grau 0  " + entrada + "\n" +
+    "grau 1  " + g1 + "   (cada número menos o anterior, sem sinal)\n" +
+    "grau 2  " + g2 + "   (a mesma regra sobre o grau 1)";
+}
+
+// ---------- amostragem ----------
+
+function quantiza(niveis) {
+  const larg = fonte.videoWidth || fonte.naturalWidth || fonte.width;
+  const alt = fonte.videoHeight || fonte.naturalHeight || fonte.height;
+  if (!larg || !alt) return null;
+
+  // Recorta a fonte para a proporcao 98:112, centralizada.
+  const alvo = COLS / LINS;
+  let sw = larg, sh = alt, sx = 0, sy = 0;
+  if (larg / alt > alvo) { sw = alt * alvo; sx = (larg - sw) / 2; }
+  else { sh = larg / alvo; sy = (alt - sh) / 2; }
+
+  ctx.save();
+  ctx.clearRect(0, 0, COLS, LINS);
+  if (usandoCamera) { ctx.translate(COLS, 0); ctx.scale(-1, 1); } // espelho
+  ctx.drawImage(fonte, sx, sy, sw, sh, 0, 0, COLS, LINS);
+  ctx.restore();
+
+  const px = ctx.getImageData(0, 0, COLS, LINS).data;
+  const g = new Uint8Array(COLS * LINS);
+  for (let i = 0; i < g.length; i++) {
+    const r = px[i * 4], gg = px[i * 4 + 1], b = px[i * 4 + 2];
+    const lum = 0.299 * r + 0.587 * gg + 0.114 * b;        // 0 escuro, 255 claro
+    const nivel = Math.round((1 - lum / 255) * (niveis - 1)); // 0 claro, max escuro
+    g[i] = nivel;
+  }
+  return g;
+}
+
+// ---------- desenho ----------
+
+function rampaAtual(niveis) {
+  let r = el("rampa").value;
+  if (r.length === 0) r = " .:+xX#@";
+  const chars = [];
+  for (let i = 0; i < niveis; i++) chars.push(r[Math.min(i, r.length - 1)]);
+  return chars;
+}
+
+function emTexto(g, chars) {
+  const linhas = [];
+  for (let y = 0; y < LINS; y++) {
+    let s = "";
+    for (let x = 0; x < COLS; x++) s += chars[g[y * COLS + x]];
+    linhas.push(s);
+  }
+  return linhas;
+}
+
+function escapa(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function desenhaGrade(n, g, chars) {
+  const pre = el("grade" + n);
+  const linhas = emTexto(g, chars);
+  if (linhaSel >= 0) {
+    pre.innerHTML = linhas.map((l, y) =>
+      y === linhaSel ? '<span class="sel">' + escapa(l) + "</span>" : escapa(l)
+    ).join("\n");
+  } else {
+    pre.textContent = linhas.join("\n");
+  }
+}
+
+// Ajusta a fonte para 98 colunas caberem na largura do painel.
+function ajustaFonte() {
+  document.querySelectorAll("pre.grade").forEach((pre) => {
+    const larg = pre.clientWidth - 12;
+    if (larg <= 0) return;
+    const tam = larg / (COLS * 0.6);
+    pre.style.fontSize = tam + "px";
+    pre.style.lineHeight = (tam * 0.62) + "px"; // celula quase quadrada
+  });
+}
+
+function mostraLeitura() {
+  if (linhaSel < 0 || !graus[0]) return;
+  const nomes = ["grau 0", "grau 1", "grau 2", "tempo "];
+  const mostrar = el("tempo").checked ? 4 : 3;
+  const linhas = [];
+  for (let n = 0; n < mostrar; n++) {
+    const g = graus[n];
+    if (!g) continue;
+    let s = "";
+    for (let x = 0; x < COLS; x++) s += g[linhaSel * COLS + x];
+    linhas.push(nomes[n] + "  " + s);
+  }
+  el("tituloLeitura").textContent = "Leitura da linha " + (linhaSel + 1) + " de " + LINS;
+  el("leitura").textContent = linhas.join("\n");
+}
+
+// ---------- ciclo ----------
+
+function calcula() {
+  if (!fonte) return;
+  const niveis = Number(el("niveis").value);
+  const direcao = el("direcao").value;
+  const g0 = quantiza(niveis);
+  if (!g0) return;
+
+  graus[0] = g0;
+  graus[1] = derivaGrade(g0, direcao, niveis - 1);
+  graus[2] = derivaGrade(graus[1], direcao, niveis - 1);
+  graus[3] = derivaTempo(g0, grau0Anterior);
+  grau0Anterior = g0;
+
+  const chars = rampaAtual(niveis);
+  const mostrar = el("tempo").checked ? 4 : 3;
+  for (let n = 0; n < mostrar; n++) desenhaGrade(n, graus[n], chars);
+  mostraLeitura();
+}
+
+function laco(t) {
+  // Cerca de 12 quadros por segundo bastam e poupam o processador.
+  if (usandoCamera && !el("pausa").checked && t - ultimoQuadro > 80) {
+    ultimoQuadro = t;
+    calcula();
+  }
+  requestAnimationFrame(laco);
+}
+
+// ---------- entradas ----------
+
+function imagemDeTeste() {
+  // Um rosto simples desenhado em canvas, para a página funcionar sem câmera.
+  const c = document.createElement("canvas");
+  c.width = 490; c.height = 560;
+  const g = c.getContext("2d");
+  const grad = g.createLinearGradient(0, 0, 0, 560);
+  grad.addColorStop(0, "#eee"); grad.addColorStop(1, "#888");
+  g.fillStyle = grad; g.fillRect(0, 0, 490, 560);
+  g.fillStyle = "#555"; g.beginPath(); g.ellipse(245, 260, 140, 180, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#ccc"; g.beginPath(); g.ellipse(245, 280, 110, 145, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#111";
+  g.beginPath(); g.ellipse(200, 250, 18, 12, 0, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.ellipse(290, 250, 18, 12, 0, 0, Math.PI * 2); g.fill();
+  g.fillRect(232, 270, 26, 60);
+  g.beginPath(); g.ellipse(245, 365, 45, 14, 0, 0, Math.PI * 2); g.fill();
+  return c;
+}
+
+async function ligaCamera() {
+  const aviso = el("aviso");
+  if (usandoCamera) { desligaCamera(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    aviso.textContent = "Este navegador não oferece acesso à câmera. Abra a página por https ou em localhost.";
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+    video.srcObject = stream;
+    await video.play();
+    fonte = video;
+    usandoCamera = true;
+    grau0Anterior = null;
+    el("btnCamera").textContent = "Desligar câmera";
+    aviso.textContent = "";
+  } catch (e) {
+    aviso.textContent = "Não foi possível abrir a câmera: " + e.message;
+  }
+}
+
+function desligaCamera() {
+  const s = video.srcObject;
+  if (s) s.getTracks().forEach((t) => t.stop());
+  video.srcObject = null;
+  usandoCamera = false;
+  el("btnCamera").textContent = "Ligar câmera";
+}
+
+el("btnCamera").addEventListener("click", ligaCamera);
+
+el("arquivo").addEventListener("change", (ev) => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  desligaCamera();
+  const img = new Image();
+  img.onload = () => { fonte = img; grau0Anterior = null; calcula(); URL.revokeObjectURL(img.src); };
+  img.onerror = () => { el("aviso").textContent = "Não consegui ler esse arquivo de imagem."; };
+  img.src = URL.createObjectURL(f);
+});
+
+["niveis", "direcao", "rampa"].forEach((id) =>
+  el(id).addEventListener("input", () => { grau0Anterior = null; calcula(); })
+);
+
+el("tempo").addEventListener("change", () => {
+  el("painelTempo").hidden = !el("tempo").checked;
+  ajustaFonte();
+  calcula();
+});
+
+// Clique numa grade seleciona a linha.
+document.querySelectorAll("pre.grade").forEach((pre) => {
+  pre.addEventListener("click", (ev) => {
+    const r = pre.getBoundingClientRect();
+    const estilo = getComputedStyle(pre);
+    const topo = parseFloat(estilo.paddingTop);
+    const alturaLinha = parseFloat(estilo.lineHeight);
+    const y = Math.floor((ev.clientY - r.top - topo) / alturaLinha);
+    if (y < 0 || y >= LINS) return;
+    linhaSel = y;
+    calcula();
+  });
+});
+
+// Copiar e baixar como texto puro.
+function textoDoGrau(n) {
+  if (!graus[n]) return "";
+  const niveis = Number(el("niveis").value);
+  return emTexto(graus[n], rampaAtual(niveis)).join("\n") + "\n";
+}
+
+document.querySelectorAll("[data-copiar]").forEach((b) =>
+  b.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(textoDoGrau(Number(b.dataset.copiar)));
+      el("aviso").textContent = "Copiado.";
+    } catch (e) {
+      el("aviso").textContent = "O navegador bloqueou a cópia. Use o botão de baixar.";
+    }
+  })
+);
+
+document.querySelectorAll("[data-baixar]").forEach((b) =>
+  b.addEventListener("click", () => {
+    const n = Number(b.dataset.baixar);
+    const nomes = ["grau-zero", "grau-um", "grau-dois", "tempo"];
+    const blob = new Blob([textoDoGrau(n)], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "derivadas-" + nomes[n] + ".txt";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  })
+);
+
+window.addEventListener("resize", ajustaFonte);
+
+// ---------- inicio ----------
+mostraExemplo();
+fonte = imagemDeTeste();
+ajustaFonte();
+calcula();
+requestAnimationFrame(laco);
+</script>
+</body>
+</html>
